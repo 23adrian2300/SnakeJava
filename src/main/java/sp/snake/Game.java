@@ -15,7 +15,6 @@ public class Game extends JPanel implements ActionListener {
     private static final int HEIGHT = 600;
     private static final int UNIT_SIZE = 20;
     private static final int DELAY = 80;
-    private static final int SPEED_INCREMENT = 200;
     private SnakeMovement snake;
     private Food food;
     private boolean isGameOver = false;
@@ -176,5 +175,53 @@ public class Game extends JPanel implements ActionListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public SnakeMovement getSnake() {
+        return snake;
+    }
+
+    public void setSnake(SnakeMovement snake) {
+        this.snake = snake;
+    }
+
+    public Food getFood() {
+        return food;
+    }
+
+    public void setFood(Food food) {
+        this.food = food;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public List<Obstacle> getObstacles() {
+        return obstacles;
+    }
+
+    public void setObstacles(List<Obstacle> obstacles) {
+        this.obstacles = obstacles;
+    }
+
+    public int getHighScore() {
+        return highScore;
+    }
+
+    public void setHighScore(int highScore) {
+        this.highScore = highScore;
     }
 }

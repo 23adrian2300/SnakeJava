@@ -91,4 +91,8 @@ public class SnakeMovement {
     public int getLength() {
         return snakeBody.size();
     }
+
+    public Direction getDirection() {
+        return direction;
+    }
 }

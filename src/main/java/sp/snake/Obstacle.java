@@ -26,4 +26,12 @@ public class Obstacle {
     public Point getPosition() {
         return position;
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setPosition(Point position) {
+        this.position = position;
+    }
 }
