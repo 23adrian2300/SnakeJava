@@ -87,4 +87,8 @@ public class SnakeMovement {
         }
         return new Point(x, y);
     }
+
+    public int getLength() {
+        return snakeBody.size();
+    }
 }

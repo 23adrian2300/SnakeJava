@@ -6,22 +6,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game extends JPanel implements ActionListener {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
     private static final int UNIT_SIZE = 20;
     private static final int DELAY = 80;
+    private static final int SPEED_INCREMENT = 200;
     private SnakeMovement snake;
     private Food food;
     private boolean isGameOver = false;
     private int score = 0;
+    private List<Obstacle> obstacles;
+
+    private int highScore = 0;
 
     public Game() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.DARK_GRAY);
         setFocusable(true);
         addKeyListener(new MyKeyAdapter());
+        loadHighScore();
         startGame();
         Timer timer = new Timer(DELAY, this);
         timer.start();
@@ -32,6 +40,8 @@ public class Game extends JPanel implements ActionListener {
         food = new Food();
         isGameOver = false;
         score = 0;
+        obstacles = new ArrayList<>();
+        addObstacles();
     }
 
     public void move() {
@@ -42,7 +52,7 @@ public class Game extends JPanel implements ActionListener {
     }
 
     public void checkCollision() {
-        if (snake.collidesWithItself() || snake.collidesWithWall()) {
+        if (snake.collidesWithItself() || snake.collidesWithWall() || collidesWithObstacle()) {
             isGameOver = true;
             return;
         }
@@ -54,6 +64,20 @@ public class Game extends JPanel implements ActionListener {
         }
     }
 
+    public boolean collidesWithObstacle() {
+        Point head = snake.getHead();
+        return obstacles.stream()
+                .anyMatch(obstacle -> obstacle.getPosition().equals(head));
+    }
+
+    public void addObstacles() {
+        int numObstacles = 5;
+        for (int i = 0; i < numObstacles; i++) {
+            Obstacle obstacle = new Obstacle();
+            obstacles.add(obstacle);
+        }
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -61,9 +85,16 @@ public class Game extends JPanel implements ActionListener {
             super.paintComponent(g);
             snake.draw(g, getUnitSize());
             food.draw(g);
+            drawObstacles(g);
             drawScore(g);
         } else {
             gameOver(g);
+        }
+    }
+
+    public void drawObstacles(Graphics g) {
+        for (Obstacle obstacle : obstacles) {
+            obstacle.draw(g, getUnitSize());
         }
     }
 
@@ -75,12 +106,19 @@ public class Game extends JPanel implements ActionListener {
 
     public void gameOver(Graphics g) {
         g.setColor(Color.red);
+        if (score > highScore) {
+            highScore = score;
+            saveHighScore();
+        }
         g.setFont(new Font("Arial", Font.BOLD, 40));
-        g.drawString("Game Over", WIDTH / 4 + 30, HEIGHT / 2);
+        g.drawString("Game Over", WIDTH / 4 + 30, HEIGHT / 2-90);
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("Score: " + score, WIDTH / 2 - 35, HEIGHT / 2 + 30);
-        g.drawString("Press SPACE to restart", WIDTH / 4 + 30, HEIGHT / 2 + 60);
+        g.drawString("Score: " + score, WIDTH / 2 - 50, HEIGHT / 2 -60);
+        g.setColor(Color.GREEN);
+        g.drawString("Highscore: " + highScore, WIDTH / 2 - 75, HEIGHT / 2 - 30);
+        g.setColor(Color.white);
+        g.drawString("Press SPACE to restart", WIDTH / 4 + 30, HEIGHT / 2);
     }
 
     public static int getSWidth() {
@@ -115,6 +153,28 @@ public class Game extends JPanel implements ActionListener {
         move();
         repaint();
     }
+    public void loadHighScore() {
+        try {
+            FileReader fileReader = new FileReader("highscore.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            if (line != null) {
+                highScore = Integer.parseInt(line);
+            }
+            bufferedReader.close();
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+    }
 
-
+    public void saveHighScore() {
+        try {
+            FileWriter fileWriter = new FileWriter("highscore.txt");
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(Integer.toString(highScore));
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
