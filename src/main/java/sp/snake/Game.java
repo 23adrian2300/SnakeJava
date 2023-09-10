@@ -16,6 +16,8 @@ public class Game extends JPanel implements ActionListener {
     private static final int UNIT_SIZE = 20;
     private static final int DELAY = 80;
     private SnakeMovement snake;
+    private MainMenu mainMenu;
+
     private Food food;
     private boolean isGameOver = false;
     private int score = 0;
@@ -27,6 +29,7 @@ public class Game extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.DARK_GRAY);
         setFocusable(true);
+        mainMenu = new MainMenu(this);
         addKeyListener(new MyKeyAdapter());
         loadHighScore();
         startGame();
@@ -143,6 +146,8 @@ public class Game extends JPanel implements ActionListener {
                 if (key == KeyEvent.VK_SPACE) {
                     startGame();
                 }
+
+
             }
         }
     }
